@@ -40,11 +40,14 @@ class MarkdownRender extends Render
         // whether to use html markup for text styling
         $useMarkup = in_array('markup', $flags);
 
+        // whether to also use paragraph markup
+        $useParagraphMarkup = $useMarkup && in_array('paragraph-markup', $flags);
+
         // whether to use fancy punctuation
         $fancy = in_array('fancy', $flags);
 
         $markdown = null;
-        $paragraph = null;
+        $paragraph = $useParagraphMarkup ? '<p>' : null;
         $mode = Filter::FORMAT_NONE;
         foreach ($this->content as $part) {
             $format = $part[0];
@@ -52,7 +55,8 @@ class MarkdownRender extends Render
             // output breaks
             if ($paragraph) {
                 if ($format & (Filter::FORMAT_RULE | Filter::FORMAT_BREAK)) {
-                    $paragraph .= $this->closeFormat($mode, $useMarkup) . "\n\n";
+                    $paragraph .= $this->closeFormat($mode, $useMarkup);
+                    $paragraph .= ($useParagraphMarkup ? '</p>' : null) . "\n\n";
                     if ($format & Filter::FORMAT_RULE) {
                         $paragraph .= ($useMarkup ? '<hr />' : '***') . "\n\n";
                     }
