@@ -67,4 +67,7 @@ if (!empty($path)) {
                 http_response_code(404);
             }
     }
+} else {
+    http_response_code(302);
+    header('Location: https://github.com/erayd/context');
 }
