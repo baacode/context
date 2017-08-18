@@ -61,7 +61,7 @@ class MarkdownRender extends Render
                         $paragraph .= ($useMarkup ? '<hr />' : '***') . "\n\n";
                     }
                     $markdown .= $fancy ? $this->smartPunctuation($paragraph) : $paragraph;
-                    $paragraph = null;
+                    $paragraph = $useParagraphMarkup ? '<p>' : null;
                     $mode = Filter::FORMAT_NONE;
                 } elseif ($format & Filter::FORMAT_NEWLINE) {
                     $paragraph .= $useMarkup ? "<br />\n" : "\n";
