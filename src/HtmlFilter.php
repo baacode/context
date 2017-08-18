@@ -21,11 +21,6 @@ class HTMLFilter extends Filter {
      */
     public function __construct(string $content)
     {
-        // set target
-        $defaultTarget = '//*[not(self::script|self::style)]/text()|//br|//hr';
-        $container = $_SERVER['HTTP_X_CONTAINER'] ?? '/html/body';
-        $target = $container . ($_SERVER['HTTP_X_TARGET'] ?? $defaultTarget);
-
         // load content document
         $d = new \DOMDocument('1.0', 'utf8');
         $errorMode = libxml_use_internal_errors(true);
@@ -33,10 +28,33 @@ class HTMLFilter extends Filter {
         $x = new \DOMXPath($d);
         libxml_use_internal_errors($errorMode);
 
-        // autofind the container
+        // find the closest container that holds enough of the text
+        $ancestors = [];
+        $discard = '#/head[[/]|/a[[/]|/script[[/]|/form[[/]|/select[[/]#ui';
+        foreach ($x->query('//text()') as $textNode) {
+            if (preg_match($discard, $textNode->getNodePath())) {
+                continue;
+            }
+            $content = $textNode->wholeText;
+            $contentLength = mb_strlen($content);
+            $contentWords = str_word_count($content);
+            if ($contentWords > 2 && $contentLength > 20 && $contentLength / $contentWords >= 3) {
+                $ancestors[$textNode->parentNode->getNodePath()] += $contentWords;
+            }
+        }
+        while (count($ancestors) > 1 && end($ancestors) < array_sum($ancestors) * 0.7) {
+            asort($ancestors, \SORT_NUMERIC);
+            end($ancestors);
+            $container = substr(key($ancestors), 0, strrpos(key($ancestors), '/'));
+            foreach ($ancestors as $path => $words) {
+                if (substr($path, 0, strlen($container)) === $container) {
+                    $ancestors[$container] += $words;
+                    unset($ancestors[$path]);
+                }
+            }
+        }
 
-
-        // find the container
+        // get the container node
         if (!($containerNode = $x->query($container)->item(0))) {
             throw new \Exception('Missing container');
         }
@@ -44,7 +62,8 @@ class HTMLFilter extends Filter {
         // find the text nodes
         $textNodes = [];
         $carry = self::FORMAT_NONE;
-        foreach ($x->query($target) as $textNode) {
+        $targetQuery = './/*[not(self::script|self::style)]/text()|//br|//hr';
+        foreach ($x->query($targetQuery, $containerNode) as $textNode) {
             if ($textNode instanceof \DOMElement) {
                 switch (strtolower($textNode->tagName)) {
                     case 'hr':
