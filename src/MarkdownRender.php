@@ -40,8 +40,8 @@ class MarkdownRender extends Render
         // whether to use html markup for text styling
         $useMarkup = in_array('markup', $flags);
 
-        // whether to also use paragraph markup
-        $useParagraphMarkup = $useMarkup && in_array('paragraph-markup', $flags);
+        // whether to also use <p> paragraph markup
+        $useParagraphMarkup = $useMarkup && in_array('p', $flags);
 
         // whether to use fancy punctuation
         $fancy = in_array('fancy', $flags);
