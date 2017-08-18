@@ -46,6 +46,7 @@ abstract class Render
             "/'(.+?)'/u" => '‘$1’',
             '/(?<=[^.]|^)\.\.\.(?=[^.]|$)/u' => '…',
             '/(?<=[^\1])([,.;:])(?=[\w])/' => '$1 ',
+            '|(?<=[\w])/(?=[\w])|' => ' / ',
         ];
         foreach ($map as $from => $to) {
             $paragraph = preg_replace($from, $to, $paragraph);
