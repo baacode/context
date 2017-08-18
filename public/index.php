@@ -7,7 +7,7 @@ require(__DIR__ . '/../vendor/autoload.php');
 $path = parse_url($_SERVER['REQUEST_URI'], \PHP_URL_PATH);
 $path = explode('/', trim($path, '/'));
 
-if (!empty($path)) {
+if (!empty($path) && !empty($path[0])) {
     $peek = $path[0];
     switch(array_shift($path)) {
         case 'part': {
