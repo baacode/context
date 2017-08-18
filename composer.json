@@ -1,0 +1,20 @@
+{
+    "name": "erayd/context",
+    "description": "Extract content from web documents",
+    "homepage": "https://github.com/erayd/context",
+    "type": "project",
+    "require": {
+        "php": "^7.0.0",
+        "predis/predis": "^1.1"
+    },
+    "authors": [{
+        "name": "Steve Gilberd",
+        "email": "steve@erayd.net"
+    }],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Context\\": "src/"
+        }
+    }
+}
