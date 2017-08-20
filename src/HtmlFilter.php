@@ -115,7 +115,7 @@ class HTMLFilter extends Filter {
 
             $carryFormat = $node[0];
             // walk ancestors and parse text styling
-            for ($n = $node[1]->parentNode; ; $n = $n->parentNode) {
+            for ($n = $node[1]->parentNode; is_object($n) && $n instanceof \DOMElement; $n = $n->parentNode) {
                 if (!($n instanceof \DOMElement)) {
                     continue;
                 }
