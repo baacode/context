@@ -3,7 +3,7 @@
 namespace Context;
 
 /**
- * Base render class
+ * Markdown render class
  *
  * @package erayd/context
  * @copyright (c) 2017 Erayd LTD
@@ -78,6 +78,9 @@ class MarkdownRender extends Render
             $mode = $format;
         }
         $paragraph .= $this->closeFormat($mode, $useMarkup);
+        if ($useParagraphMarkup) {
+            $paragraph .= '</p>';
+        }
 
         $markdown .= $fancy ? $this->smartPunctuation($paragraph) : $paragraph;
 
