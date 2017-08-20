@@ -62,7 +62,7 @@ abstract class Filter
         //  - any two different non-word characters repeated in the same sequence >= three times
         //    + optionally with the first character appended again
         //  - five or more periods
-        $pattern = '/^\s*(?:([^\w.])\1{2,}|([^\w])([^\w\2])(?:\2\3){2,}\2?|\.{5,})\s*$/u';
+        $pattern = '/^\s*(?:([^\w\s.])\1{2,}|([^\w\s])([^\w\s\2])(?:\2\3){2,}\2?|\.{5,})\s*$/u';
 
         return preg_match($pattern, $paragraph);
     }

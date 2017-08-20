@@ -37,17 +37,19 @@ abstract class Render
     protected function smartPunctuation(string $paragraph) : string
     {
         $map = [
-            '/["\x{201D}\x{201C}]+/u' => '"',
-            '/"(.+?)"/u' => '“$1”',
-            '/^"/u' => '“',
-            "/['\x{2018}\x{2019}]+/u" => "'",
-            "/(?<=[\w])'(?=[\w])/u" => "’",
-            "/(?<=s)'(?=[\s,.;:-\x{2014}?\x{201D}]|$)/u" => "’",
-            "/'(.+?)'/u" => '‘$1’',
-            '/(?<=[^.]|^)\.\.\.(?=[^.]|$)/u' => '…',
-            '/\s+([.,;:])/' => '$1',
-            '/(?<=[^\1])([,.;:])(?=[\w])/' => '$1 ',
-            '|(?<=[\w])/(?=[\w])|' => ' / ',
+            '/\s+/u' => ' ',                                       // normalise whitespace
+            '/["\x{201D}\x{201C}]+/u' => '"',                      // normalise double-quotes
+            '/"(.+?)"/u' => '“$1”',                                // fancy double-quote pairs
+            '/^"/u' => '“',                                        // fancy double-quote paragraph start
+            "/['\x{2018}\x{2019}]+/u" => "'",                      // normalise single-quotes
+            "/(?<=[\w])'(?=[\w])/u" => "’",                        // fancy apostrophes
+            "/(?<=s)'(?=[\s,.;:-\x{2014}?\x{201D}]|$)/u" => "’",   // fancy possessive apostrophes
+            "/'(.+?)'/u" => '‘$1’',                                // fancy single-quote pairs
+            '/(?<=[^.]|^)\s*(?:\.(\s*)){3,5}(?=[^.]|$)/u' => '… ', // fancy ellipses
+            '/\s+([.,;:\x{2026}])/u' => '$1',                      // correct preceeding whitespace
+            '/(?<=[^\1])([,.;:\x{2026}])(?=[\w])/u' => '$1 ',      // correct trailing whitespace
+            '|(?<=[\w])\s*/\s*(?=[\w])|u' => ' / ',                // correct surrounding whitespace
+            '/^\s*(.+?)\s*$/u' => "$1",                            // remove wrapping whitespace
         ];
         foreach ($map as $from => $to) {
             $paragraph = preg_replace($from, $to, $paragraph);

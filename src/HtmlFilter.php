@@ -114,71 +114,73 @@ class HTMLFilter extends Filter {
             }
 
             $carryFormat = $node[0];
-            // walk ancestors and parse text styling
-            for ($n = $node[1]->parentNode; is_object($n) && $n instanceof \DOMElement; $n = $n->parentNode) {
-                if (!($n instanceof \DOMElement)) {
-                    continue;
-                }
-                $initialFormat = $node[0];
-                switch ($n->tagName) {
-                    case 'em':
-                    case'i': {
-                        $node[0] |= self::FORMAT_ITALIC;
-                        break;
+            // walk ancestors and parse text styling...
+            if (!$container->isSameNode($node[1]->parentNode)) { // ...unless the text node is a direct child of the container
+                for ($n = $node[1]->parentNode; is_object($n) && $n instanceof \DOMElement; $n = $n->parentNode) {
+                    if (!($n instanceof \DOMElement)) {
+                        continue;
                     }
-                    case 'strong':
-                    case 'b': {
-                        $node[0] |= self::FORMAT_BOLD;
-                        break;
-                    }
-                    case 'u':
-                    case 'a': {
-                        $node[0] |= self::FORMAT_UNDERLINE;
-                        break;
-                    }
-                    case 's': {
-                        $node[0] |= self::FORMAT_STRIKE;
-                        break;
-                    }
-                    case 'center': {
-                        $node[0] |= self::FORMAT_CENTER;
-                        break;
-                    }
-                    default: {
-                        if (!$section->isSameNode($n)) {
-                            $node[0] |= self::FORMAT_BREAK;
-                        }
-
-                        $style = strtolower($n->getAttribute('style'));
-                        if (strpos($style, 'italic') !== false) {
+                    $initialFormat = $node[0];
+                    switch ($n->tagName) {
+                        case 'em':
+                        case'i': {
                             $node[0] |= self::FORMAT_ITALIC;
+                            break;
                         }
-
-                        if (strpos($style, 'bold') !== false) {
+                        case 'strong':
+                        case 'b': {
                             $node[0] |= self::FORMAT_BOLD;
+                            break;
                         }
-
-                        if (strpos($style, 'underline') !== false) {
+                        case 'u':
+                        case 'a': {
                             $node[0] |= self::FORMAT_UNDERLINE;
+                            break;
                         }
-
-                        if (strpos($style, 'line-through') !== false) {
+                        case 's': {
                             $node[0] |= self::FORMAT_STRIKE;
+                            break;
                         }
-
-                        if (preg_match('|text-align:[^;]*center|', $style)) {
+                        case 'center': {
                             $node[0] |= self::FORMAT_CENTER;
+                            break;
                         }
+                        default: {
+                            if (!$section->isSameNode($n)) {
+                                $node[0] |= self::FORMAT_BREAK;
+                            }
 
+                            $style = strtolower($n->getAttribute('style'));
+                            if (strpos($style, 'italic') !== false) {
+                                $node[0] |= self::FORMAT_ITALIC;
+                            }
+
+                            if (strpos($style, 'bold') !== false) {
+                                $node[0] |= self::FORMAT_BOLD;
+                            }
+
+                            if (strpos($style, 'underline') !== false) {
+                                $node[0] |= self::FORMAT_UNDERLINE;
+                            }
+
+                            if (strpos($style, 'line-through') !== false) {
+                                $node[0] |= self::FORMAT_STRIKE;
+                            }
+
+                            if (preg_match('|text-align:[^;]*center|', $style)) {
+                                $node[0] |= self::FORMAT_CENTER;
+                            }
+
+                        }
                     }
-                }
 
-                // don't parse the container
-                if ($container->isSameNode($n->parentNode)) {
-                    break;
-                } elseif($node[0] & self::FMASK_STYLE & ~$initialFormat) {
-                    // if this node introduced new style formatting, strip everything else
-                    $node[0] &= self::FMASK_STYLE;
+                    // don't parse the container
+                    if ($container->isSameNode($n->parentNode)) {
+                        break;
+                    } elseif($node[0] & self::FMASK_STYLE & ~$initialFormat) {
+                        // if this node introduced new style formatting, strip everything else
+                        $node[0] &= self::FMASK_STYLE;
+                    }
                 }
             }
 

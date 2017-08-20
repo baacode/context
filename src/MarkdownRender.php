@@ -47,7 +47,7 @@ class MarkdownRender extends Render
         $fancy = in_array('fancy', $flags);
 
         $markdown = null;
-        $paragraph = $useParagraphMarkup ? '<p>' : null;
+        $paragraph = null;
         $mode = Filter::FORMAT_NONE;
         foreach ($this->content as $part) {
             $format = $part[0];
@@ -56,12 +56,14 @@ class MarkdownRender extends Render
             if ($paragraph) {
                 if ($format & (Filter::FORMAT_RULE | Filter::FORMAT_BREAK)) {
                     $paragraph .= $this->closeFormat($mode, $useMarkup);
-                    $paragraph .= ($useParagraphMarkup ? '</p>' : null) . "\n\n";
-                    if ($format & Filter::FORMAT_RULE) {
-                        $paragraph .= ($useMarkup ? '<hr />' : '***') . "\n\n";
+                    if ($fancy) {
+                        $paragraph = $this->smartPunctuation($paragraph);
                     }
-                    $markdown .= $fancy ? $this->smartPunctuation($paragraph) : $paragraph;
-                    $paragraph = $useParagraphMarkup ? '<p>' : null;
+                    $markdown .= $useParagraphMarkup ? "<p>$paragraph</p>\n\n" : "$paragraph\n\n";
+                    $paragraph = null;
+                    if ($format & Filter::FORMAT_RULE) {
+                        $markdown .= ($useMarkup ? '<hr />' : '***') . "\n\n";
+                    }
                     $mode = Filter::FORMAT_NONE;
                 } elseif ($format & Filter::FORMAT_NEWLINE) {
                     $paragraph .= $useMarkup ? "<br />\n" : "\n";
@@ -78,11 +80,10 @@ class MarkdownRender extends Render
             $mode = $format;
         }
         $paragraph .= $this->closeFormat($mode, $useMarkup);
-        if ($useParagraphMarkup) {
-            $paragraph .= '</p>';
+        if ($fancy) {
+            $paragraph = $this->smartPunctuation($paragraph);
         }
-
-        $markdown .= $fancy ? $this->smartPunctuation($paragraph) : $paragraph;
+        $markdown .= $useParagraphMarkup ? "<p>$paragraph</p>\n" : "$paragraph\n";
 
         return wordwrap($markdown, 75, "\n", 100);
     }
