@@ -12,15 +12,16 @@ namespace Context;
  */
 abstract class Filter
 {
-    const FORMAT_NONE      = 0;
-    const FORMAT_BREAK     = 1 << 0;
-    const FORMAT_ITALIC    = 1 << 1;
-    const FORMAT_BOLD      = 1 << 2;
-    const FORMAT_UNDERLINE = 1 << 3;
-    const FORMAT_STRIKE    = 1 << 4;
-    const FORMAT_CENTER    = 1 << 5;
-    const FORMAT_NEWLINE   = 1 << 6;
-    const FORMAT_RULE      = 1 << 7;
+    const FORMAT_NONE       = 0;
+    const FORMAT_BREAK      = 1 << 0;
+    const FORMAT_ITALIC     = 1 << 1;
+    const FORMAT_BOLD       = 1 << 2;
+    const FORMAT_UNDERLINE  = 1 << 3;
+    const FORMAT_STRIKE     = 1 << 4;
+    const FORMAT_CENTER     = 1 << 5;
+    const FORMAT_NEWLINE    = 1 << 6;
+    const FORMAT_RULE       = 1 << 7;
+    const FORMAT_WHITESPACE = 1 << 8;
 
     const FMASK_STYLE = self::FORMAT_ITALIC | self::FORMAT_BOLD | self::FORMAT_UNDERLINE |
         self::FORMAT_STRIKE | self::FORMAT_CENTER;

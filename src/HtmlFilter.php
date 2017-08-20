@@ -102,7 +102,7 @@ class HTMLFilter extends Filter {
             // whitespace-only nodes do not contain anything that can be
             // formatted, so just use the same style as the previous node
             if (node[1]->isWhitespaceInElementContent || trim($node[1]->wholeText) === '') {
-                $node[0] = $previousStyle;
+                $node[0] = $previousStyle | self::FORMAT_WHITESPACE;
                 continue;
             }
 
