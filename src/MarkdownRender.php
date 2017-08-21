@@ -43,6 +43,9 @@ class MarkdownRender extends Render
         // whether to also use <p> paragraph markup
         $useParagraphMarkup = $useMarkup && in_array('p', $flags);
 
+        // whether to indent paragraphs with spaces
+        $useIndent = (!$useMarkup && in_array('indent', $flags)) ? '  ' : null;
+
         $markdown = null;
         $paragraph = null;
         $mode = Filter::FORMAT_NONE;
@@ -53,7 +56,7 @@ class MarkdownRender extends Render
             if ($paragraph) {
                 if ($format & (Filter::FORMAT_RULE | Filter::FORMAT_BREAK)) {
                     $paragraph .= $this->closeFormat($mode, $useMarkup);
-                    $paragraph = $this->smartPunctuation($paragraph);
+                    $paragraph = ($useIndent ? '  ' : null) . $this->smartPunctuation($paragraph);
                     $markdown .= $useParagraphMarkup ? "<p>$paragraph</p>\n\n" : "$paragraph\n\n";
                     $paragraph = null;
                     if ($format & Filter::FORMAT_RULE) {
@@ -75,7 +78,7 @@ class MarkdownRender extends Render
             $mode = $format;
         }
         $paragraph .= $this->closeFormat($mode, $useMarkup);
-        $paragraph = $this->smartPunctuation($paragraph);
+        $paragraph = ($useIndent ? '  ' : null) . $this->smartPunctuation($paragraph);
         $markdown .= $useParagraphMarkup ? "<p>$paragraph</p>\n" : "$paragraph\n";
 
         return wordwrap($markdown, 75, "\n", 100);
