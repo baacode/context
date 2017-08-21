@@ -29,7 +29,7 @@ abstract class Render
     }
 
     /**
-     * Make the punctuation in the provided paragraph fancy
+     * Clean up the punctuation in the provided paragraph
      *
      * @param string $paragraph
      * @return string
