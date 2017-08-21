@@ -49,6 +49,7 @@ abstract class Render
             '/\s+([.,;:!?\x{2026}])/u' => '$1',                    // correct preceeding whitespace
             '/(?<=[\w])\(\s+/u' => ' (',                           // correct preceding whitespace
             '/([,.;:!?)\x{2026}])\s*(?=[\w])/u' => '$1 ',          // correct trailing whitespace
+            '/(\w\.)\s*(?=\w\.)/u' => '$1',                        // correct acronym period spacing
             '|(?<=[\w])\s*/\s*(?=[\w])|u' => ' / ',                // correct surrounding whitespace
             '/^\s*(.+?)\s*$/u' => "$1",                            // remove wrapping whitespace
         ];
