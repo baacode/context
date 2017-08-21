@@ -78,20 +78,21 @@ abstract class Filter
         $carry = self::FORMAT_NONE;
         $previous = null;
         foreach ($content as $key => &$node) {
-            // move removed styles as early as possible
-            $removedStyle = self::FMASK_STYLE & ($carry & ~$node[0]);
-            if (!is_null($previous) && $removedStyle && preg_match('/(^.*?)([\s.,;:!\x{2026}]+)$/u', $previous[1], $matches)) {
-                $previous[1] = $matches[1];
-                $node[1] = $matches[2] . $node[1];
-            }
+            if (!($node[0] & self::FMASK_STRUCTURE)) {
+                // move removed styles as early as possible
+                $removedStyle = self::FMASK_STYLE & ($carry & ~$node[0]);
+                if (!is_null($previous) && $removedStyle && preg_match('/(^.*?)([\s.,;:!\x{2026}]+)$/u', $previous[1], $matches)) {
+                    $previous[1] = $matches[1];
+                    $node[1] = $matches[2] . $node[1];
+                }
 
-            // move added styles as late as possible
-            $addedStyle = self::FMASK_STYLE & ($node[0] & ~$carry);
-            if (!is_null($previous) && $addedStyle && preg_match('/(^[\s.,;:!\x{2026}]+)(.*$)/u', $node[1], $matches)) {
-                $node[1] = $matches[2];
-                $previous[1] .= $matches[1];
+                // move added styles as late as possible
+                $addedStyle = self::FMASK_STYLE & ($node[0] & ~$carry);
+                if (!is_null($previous) && $addedStyle && preg_match('/(^[\s.,;:!\x{2026}]+)(.*$)/u', $node[1], $matches)) {
+                    $node[1] = $matches[2];
+                    $previous[1] .= $matches[1];
+                }
             }
-
             $carry = $node[0];
             $previous = &$content[$key];
         }
