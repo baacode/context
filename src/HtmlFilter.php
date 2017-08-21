@@ -200,7 +200,9 @@ class HTMLFilter extends Filter {
         // save text nodes
         $content = [];
         foreach ($textNodes as $node) {
-            $content[] = [$node[0], preg_replace('/\s+/u', ' ', $node[1]->wholeText)];
+            if (count($content) || !($node[0] & self::FORMAT_WHITESPACE)) {
+                $content[] = [$node[0], preg_replace('/\s+/u', ' ', $node[1]->wholeText)];
+            }
         }
 
         // normalise formatting
