@@ -79,6 +79,8 @@ abstract class Filter
         $output = [];
         $carry = self::FORMAT_NONE;
         $previous = null;
+        // TODO handle format shifts greater than one
+        // see ffnet #4099993/1 first paragraph author's note
         foreach ($content as $key => &$node) {
             // move removed styles as early as possible
             $removedStyle = self::FMASK_STYLE & ($carry & ~$node[0]);
