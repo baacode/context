@@ -198,9 +198,12 @@ class HTMLFilter extends Filter {
         unset($node); // clear &$node reference from loop
 
         // save text nodes
-        $this->content = [];
+        $content = [];
         foreach ($textNodes as $node) {
-            $this->content[] = [$node[0], preg_replace('/\s+/', ' ', $node[1]->wholeText)];
+            $content[] = [$node[0], preg_replace('/\s+/', ' ', $node[1]->wholeText)];
         }
+
+        // normalise formatting
+        $this->content = $this->normaliseFormatting($content);
     }
 }
