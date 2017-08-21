@@ -84,7 +84,7 @@ abstract class Filter
         foreach ($content as $key => &$node) {
             // move removed styles as early as possible
             $removedStyle = self::FMASK_STYLE & ($carry & ~$node[0]);
-            if (!is_null($previous) && $removedStyle && preg_match('/(^.*)([\s.,;:!\x{2026}]+)$/u', $previous[1], $matches)) {
+            if (!is_null($previous) && $removedStyle && preg_match('/(^.*?)([\s.,;:!\x{2026}]+)$/u', $previous[1], $matches)) {
                 $previous[1] = $matches[1];
                 $node[1] = $matches[2] . $node[1];
             }
