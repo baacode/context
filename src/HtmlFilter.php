@@ -167,7 +167,7 @@ class HTMLFilter extends Filter {
                                 $node[0] |= self::FORMAT_STRIKE;
                             }
 
-                            if (preg_match('|text-align:[^;]*center|', $style)) {
+                            if (preg_match('|text-align:[^;]*center|u', $style)) {
                                 $node[0] |= self::FORMAT_CENTER;
                             }
 
@@ -200,7 +200,7 @@ class HTMLFilter extends Filter {
         // save text nodes
         $content = [];
         foreach ($textNodes as $node) {
-            $content[] = [$node[0], preg_replace('/\s+/', ' ', $node[1]->wholeText)];
+            $content[] = [$node[0], preg_replace('/\s+/u', ' ', $node[1]->wholeText)];
         }
 
         // normalise formatting
