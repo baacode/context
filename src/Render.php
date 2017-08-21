@@ -39,12 +39,12 @@ abstract class Render
         $map = [
             '/\s+/u' => ' ',                                                   // normalise whitespace
             '/["\x{201D}\x{201C}]+/u' => '"',                                  // normalise double-quotes
-            '/"(.+?)"/u' => '“$1”',                                            // fancy double-quote pairs
-            '/^"/u' => '“',                                                    // fancy double-quote paragraph start
+            '/\s*"(.+?)"\s*/u' => ' “$1” ',                                    // fancy double-quote pairs
+            '/^\s*"/u' => '“',                                                 // fancy double-quote paragraph start
             "/['\x{2018}\x{2019}]+/u" => "'",                                  // normalise single-quotes
             "/(?<=[\w])'(?=[\w])/u" => "’",                                    // fancy apostrophes
             "/(?<=s)'(?=[\s,.;:-\x{2014}?\x{201D}]|$)/u" => "’",               // fancy possessive apostrophes
-            "/'(.+?)'/u" => '‘$1’',                                            // fancy single-quote pairs
+            "/\s*'(.+?)'\s*/u" => ' ‘$1’ ',                                    // fancy single-quote pairs
             '/(?<=[^.]|^)\s*(?:\.(\s*)){3,5}(?=[^.]|$)/u' => '… ',             // fancy ellipses
             '/\s*-{2,}\s*/u' => '—',                                           // fancy emdash
             '/(?:(?<=[“‘]|^|^\s)-)|(?:-(?=\s*$|[”’,.;:!?\x{2026}]))/u' => '—', // fancy emdash
