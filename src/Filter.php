@@ -75,8 +75,6 @@ abstract class Filter
      */
     protected function normaliseFormatting(array $content)
     {
-        //return $content;
-        $output = [];
         $carry = self::FORMAT_NONE;
         $previous = null;
         // TODO handle format shifts greater than one
