@@ -45,7 +45,7 @@ abstract class Render
             "/(?<=[\w])'(?=[\w])/u" => "’",                                    // fancy apostrophes
             "/(?<=s)'(?=[\s,.;:-\x{2014}?\x{201D}]|$)/u" => "’",               // fancy possessive apostrophes
             "/\s*'(.+?)'\s*/u" => ' ‘$1’ ',                                    // fancy single-quote pairs
-            '/(?<=[^.]|^)\s*(?:\.(\s*)){3,5}(?=[^.]|$)/u' => '… ',             // fancy ellipses
+            '/(?<=[^.]|^)\s*(?:\.(\s*)){3,5}(?=[^.]|$)/u' => '…',              // fancy ellipses
             '/(?:\s*-{2,}\s*)|(?:(?<=\w)-(?=\s))/u' => '—',                    // fancy emdash
             '/(?:(?<=[“‘]|^|^\s)-)|(?:-(?=\s*$|[”’,.;:!?\x{2026}]))/u' => '—', // fancy emdash
             '/\s+([.,;:!?\x{2026}])/u' => '$1',                                // correct preceeding whitespace
