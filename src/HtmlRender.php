@@ -20,10 +20,10 @@ class HtmlRender extends MarkdownRender
      *
      * @return string
      */
-    public function render(...$flags) : string
+    public function render(int $flags = self::RENDER_NONE) : string
     {
-        $content = parent::render('markup', 'p', ...$flags);
-        if (in_array('complete', $flags)) {
+        $content = parent::render($flags | self::RENDER_MARKUP | self::RENDER_MARKUP_PARAGRAPH);
+        if ($flags & self::RENDER_COMPLETE) {
             $content = "<!DOCTYPE html>\n<html>\n  <head></head>\n  <body>\n$content\n  </body>\n</html>\n";
         }
         return $content;

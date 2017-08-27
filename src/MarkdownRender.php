@@ -35,16 +35,16 @@ class MarkdownRender extends Render
      *
      * @return string
      */
-    public function render(...$flags) : string
+    public function render(int $flags = self::RENDER_NONE) : string
     {
         // whether to use html markup for text styling
-        $useMarkup = in_array('markup', $flags);
+        $useMarkup = $flags & self::RENDER_MARKUP;
 
         // whether to also use <p> paragraph markup
-        $useParagraphMarkup = $useMarkup && in_array('p', $flags);
+        $useParagraphMarkup = $useMarkup && ($flags & self::RENDER_MARKUP_PARAGRAPH);
 
         // whether to indent paragraphs with spaces
-        $useIndent = (!$useMarkup && in_array('indent', $flags)) ? '  ' : null;
+        $useIndent = (!$useMarkup && ($flags & self::RENDER_INDENT)) ? '  ' : null;
 
         $markdown = null;
         $paragraph = null;

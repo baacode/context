@@ -20,8 +20,8 @@ class JsonRender extends Render
      *
      * @return string
      */
-    public function render() : string
+    public function render(int $flags = self::RENDER_NONE) : string
     {
-        return json_encode($this->content, \JSON_PRETTY_PRINT);
+        return json_encode($this->content, ($flags & self::RENDER_PRETTY) ? \JSON_PRETTY_PRINT : 0);
     }
 }

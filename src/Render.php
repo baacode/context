@@ -12,6 +12,13 @@ namespace Context;
  */
 abstract class Render
 {
+    const RENDER_NONE             = 0;
+    const RENDER_MARKUP           = 1 << 0;
+    const RENDER_MARKUP_PARAGRAPH = 1 << 1;
+    const RENDER_INDENT           = 1 << 2;
+    const RENDER_COMPLETE         = 1 << 3;
+    const RENDER_PRETTY           = 1 << 4;
+
     /** @var string Mimetype for header */
     protected $mimeType = 'unknown';
 
@@ -23,9 +30,9 @@ abstract class Render
      *
      * @param string JSON-encoded content
      */
-    public function __construct(string $content)
+    public function __construct(Filter $filter)
     {
-        $this->content = json_decode($content);
+        $this->content = $filter->getContent();
     }
 
     /**
@@ -66,7 +73,7 @@ abstract class Render
      *
      * @return string
      */
-    abstract public function render() : string;
+    abstract public function render(int $flags = self::RENDER_NONE) : string;
 
     /**
      * Get the mimetype
