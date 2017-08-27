@@ -10,7 +10,8 @@ namespace Context;
  * @author Steve Gilberd <steve@erayd.net>
  * @license ISC
  */
-class HTMLFilter extends Filter {
+class HTMLFilter extends Filter
+{
     /** @var bool Whether to use markup in the output */
     protected $useMarkup = false;
 
@@ -24,7 +25,7 @@ class HTMLFilter extends Filter {
         // load content document
         $d = new \DOMDocument('1.0', 'utf8');
         $errorMode = libxml_use_internal_errors(true);
-        set_error_handler(function() {
+        set_error_handler(function () {
             return; // ignore all libxml notices - shitty input markup is expected
         }, \E_NOTICE);
         $d->loadHTML($content);
@@ -82,7 +83,7 @@ class HTMLFilter extends Filter {
                     case 'hr':
                         $carry |= self::FORMAT_RULE;
                         break;
-                    case 'br': 
+                    case 'br':
                         if ($carry & self::FORMAT_NEWLINE) {
                             $carry = ($carry & ~self::FORMAT_NEWLINE) | self::FORMAT_BREAK;
                         } else {
@@ -90,7 +91,7 @@ class HTMLFilter extends Filter {
                         }
                         break;
                 }
-            } elseif($textNode instanceof \DOMText) {
+            } elseif ($textNode instanceof \DOMText) {
                 $textNode->normalize();
                 $textNodes[$textNode->getNodePath()] = [$carry, $textNode];
                 $carry = self::FORMAT_NONE;
@@ -128,7 +129,8 @@ class HTMLFilter extends Filter {
 
             $carryFormat = $node[0];
             // walk ancestors and parse text styling...
-            if (!$container->isSameNode($node[1]->parentNode)) { // ...unless the text node is a direct child of the container
+            if (!$container->isSameNode($node[1]->parentNode)) {
+                // ...unless the text node is a direct child of the container
                 for ($n = $node[1]->parentNode; is_object($n) && $n instanceof \DOMElement; $n = $n->parentNode) {
                     if (!($n instanceof \DOMElement)) {
                         continue;
@@ -136,29 +138,24 @@ class HTMLFilter extends Filter {
                     $initialFormat = $node[0];
                     switch ($n->tagName) {
                         case 'em':
-                        case'i': {
+                        case 'i':
                             $node[0] |= self::FORMAT_ITALIC;
                             break;
-                        }
                         case 'strong':
-                        case 'b': {
+                        case 'b':
                             $node[0] |= self::FORMAT_BOLD;
                             break;
-                        }
                         case 'u':
-                        case 'a': {
+                        case 'a':
                             $node[0] |= self::FORMAT_UNDERLINE;
                             break;
-                        }
-                        case 's': {
+                        case 's':
                             $node[0] |= self::FORMAT_STRIKE;
                             break;
-                        }
-                        case 'center': {
+                        case 'center':
                             $node[0] |= self::FORMAT_CENTER;
                             break;
-                        }
-                        default: {
+                        default:
                             if (!$section->isSameNode($n)) {
                                 $node[0] |= self::FORMAT_BREAK;
                             }
@@ -183,14 +180,12 @@ class HTMLFilter extends Filter {
                             if (preg_match('|text-align:[^;]*center|u', $style)) {
                                 $node[0] |= self::FORMAT_CENTER;
                             }
-
-                        }
                     }
 
                     // don't parse the container
                     if ($container->isSameNode($n->parentNode)) {
                         break;
-                    } elseif($node[0] & self::FMASK_STYLE & ~$initialFormat) {
+                    } elseif ($node[0] & self::FMASK_STYLE & ~$initialFormat) {
                         // if this node introduced new style formatting, strip everything else
                         $node[0] &= self::FMASK_STYLE;
                     }

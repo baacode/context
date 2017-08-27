@@ -8,6 +8,9 @@
         "ext-mbstring": "^7.0",
         "ext-dom": "20031129"
     },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.0"
+    },
     "authors": [{
         "name": "Steve Gilberd",
         "email": "steve@erayd.net"
@@ -17,5 +20,9 @@
         "psr-4": {
             "Context\\": "src/"
         }
+    },
+    "scripts": {
+        "style-check": "phpcs --standard=PSR2 src",
+        "style-fix": "phpcbf --standard=PSR2 src"
     }
 }
