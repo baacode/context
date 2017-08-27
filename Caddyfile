@@ -1,8 +1,0 @@
-localhost:443 {
-    tls localhost.pem localhost.key
-    root public
-    rewrite / {
-        to {path} /index.php
-    }
-    fastcgi / localhost:9000 php
-}
