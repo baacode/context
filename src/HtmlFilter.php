@@ -24,8 +24,12 @@ class HTMLFilter extends Filter {
         // load content document
         $d = new \DOMDocument('1.0', 'utf8');
         $errorMode = libxml_use_internal_errors(true);
+        set_error_handler(function() {
+            return; // ignore all libxml notices - shitty input markup is expected
+        }, \E_NOTICE);
         $d->loadHTML($content);
         $x = new \DOMXPath($d);
+        restore_error_handler();
         libxml_use_internal_errors($errorMode);
 
         // find the closest container that holds enough of the text
@@ -39,7 +43,12 @@ class HTMLFilter extends Filter {
             $contentLength = mb_strlen($content);
             $contentWords = str_word_count($content);
             if ($contentWords > 2 && $contentLength > 20 && $contentLength / $contentWords >= 3) {
-                $ancestors[$textNode->parentNode->getNodePath()] += $contentWords;
+                $nodePath = $textNode->parentNode->getNodePath();
+                if (array_key_exists($nodePath, $ancestors)) {
+                    $ancestors[$nodePath] += $contentWords;
+                } else {
+                    $ancestors[$nodePath] = $contentWords;
+                }
             }
         }
         while (count($ancestors) > 1 && end($ancestors) < array_sum($ancestors) * 0.7) {
@@ -48,7 +57,11 @@ class HTMLFilter extends Filter {
             $container = substr(key($ancestors), 0, strrpos(key($ancestors), '/'));
             foreach ($ancestors as $path => $words) {
                 if (substr($path, 0, strlen($container)) === $container) {
-                    $ancestors[$container] += $words;
+                    if (array_key_exists($container, $ancestors)) {
+                        $ancestors[$container] += $words;
+                    } else {
+                        $ancestors[$container] = $words;
+                    }
                     unset($ancestors[$path]);
                 }
             }
@@ -101,7 +114,7 @@ class HTMLFilter extends Filter {
         foreach ($textNodes as $path => &$node) {
             // whitespace-only nodes do not contain anything that can be
             // formatted, so just use the same style as the previous node
-            if (node[1]->isWhitespaceInElementContent || trim($node[1]->wholeText) === '') {
+            if ($node[1]->isWhitespaceInElementContent()) {
                 $node[0] = $previousStyle | self::FORMAT_WHITESPACE;
                 continue;
             }
