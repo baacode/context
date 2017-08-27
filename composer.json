@@ -2,7 +2,7 @@
     "name": "erayd/context",
     "description": "Extract content from web documents",
     "homepage": "https://github.com/erayd/context",
-    "type": "project",
+    "type": "library",
     "require": {
         "php": "^7.0.0",
         "ext-mbstring": "^7.0",
