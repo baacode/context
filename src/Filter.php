@@ -41,13 +41,13 @@ abstract class Filter
     }
 
     /**
-     * Return the content as a string
+     * Get the content
      *
-     * @return string
+     * @return array
      */
-    public function render() : string
+    public function getContent() : array
     {
-        return json_encode($this->content);
+        return $this->content;
     }
 
     /**
