@@ -19,8 +19,9 @@ class HTMLFilter extends Filter
      * Load HTML content
      *
      * @param string $content
+     * @param string $context Initial container context
      */
-    public function __construct(string $content)
+    public function __construct(string $content, string $context = '/html/body')
     {
         // load content document
         $d = new \DOMDocument('1.0', 'utf8');
@@ -33,10 +34,17 @@ class HTMLFilter extends Filter
         restore_error_handler();
         libxml_use_internal_errors($errorMode);
 
+        // get the container context
+        $container = $x->query($context);
+        if (!$container || !$container->length) {
+            throw new \Exception('Invalid container');
+        }
+        $container = $container->item(0);
+
         // find the closest container that holds enough of the text
         $ancestors = [];
-        $discard = '#/head[[/]|/a[[/]|/script[[/]|/form[[/]|/select[[/]#ui';
-        foreach ($x->query('//text()') as $textNode) {
+        $discard = '#/a[[/]|/script[[/]|/form[[/]|/select[[/]#ui';
+        foreach ($x->query('.//text()', $container) as $textNode) {
             if (preg_match($discard, $textNode->getNodePath())) {
                 continue;
             }
@@ -52,6 +60,7 @@ class HTMLFilter extends Filter
                 }
             }
         }
+        $container = $container->getNodePath();
         while (count($ancestors) > 1 && end($ancestors) < array_sum($ancestors) * 0.7) {
             asort($ancestors, \SORT_NUMERIC);
             end($ancestors);
@@ -76,7 +85,7 @@ class HTMLFilter extends Filter
         // find the text nodes
         $textNodes = [];
         $carry = self::FORMAT_NONE;
-        $targetQuery = './/*[not(self::script|self::style)]/text()|//br|//hr';
+        $targetQuery = './/*[not(self::script|self::style)]/text()|.//br|.//hr|./text()';
         foreach ($x->query($targetQuery, $containerNode) as $textNode) {
             if ($textNode instanceof \DOMElement) {
                 switch (strtolower($textNode->tagName)) {

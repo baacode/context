@@ -21,9 +21,9 @@ class Context
      * @param string $content
      * @param string $filterClass
      */
-    public function __construct(string $content, string $filterClass = HtmlFilter::class)
+    public function __construct(string $content, string $filterClass = HtmlFilter::class, ...$filterOptions)
     {
-        $this->filter = new $filterClass($content);
+        $this->filter = new $filterClass($content, ...$filterOptions);
     }
 
     /**
