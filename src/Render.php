@@ -19,6 +19,9 @@ abstract class Render
     const RENDER_COMPLETE         = 1 << 3;
     const RENDER_PRETTY           = 1 << 4;
 
+    /** @var Context Context instance */
+    protected $context = null;
+
     /** @var string Mimetype for header */
     protected $mimeType = 'unknown';
 
@@ -28,10 +31,12 @@ abstract class Render
     /**
      * Load the content
      *
-     * @param string JSON-encoded content
+     * @param Context $context
+     * @param Filter $filter
      */
-    public function __construct(Filter $filter)
+    public function __construct(Context $context, Filter $filter)
     {
+        $this->context = $context;
         $this->content = $filter->getContent();
     }
 

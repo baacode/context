@@ -27,17 +27,32 @@ abstract class Filter
         self::FORMAT_STRIKE | self::FORMAT_CENTER;
     const FMASK_STRUCTURE = self::FORMAT_BREAK | self::FORMAT_NEWLINE | self::FORMAT_RULE;
 
+    /** @var Context Context instance */
+    protected $context = null;
+
     /** @var string Part content */
     protected $content = null;
 
     /**
      * Load the content
      *
+     * @param Context $context
      * @param string $content
      */
-    public function __construct(string $content)
+    public function __construct(Context $context, string $content)
     {
-        $this->content = $content;
+        $this->context = $context;
+    }
+
+    /**
+     * Get config option
+     *
+     * @param int $option
+     * @return mixed
+     */
+    public function getConfig(int $option)
+    {
+        return $this->context->getConfig($option);
     }
 
     /**

@@ -18,11 +18,13 @@ class HTMLFilter extends Filter
     /**
      * Load HTML content
      *
+     * @param string $context
      * @param string $content
-     * @param string $context Initial container context
      */
-    public function __construct(string $content, string $context = '/html/body')
+    public function __construct(Context $context, string $content)
     {
+        parent::__construct($context, $content);
+
         // load content document
         $d = new \DOMDocument('1.0', 'utf8');
         $errorMode = libxml_use_internal_errors(true);
@@ -35,7 +37,8 @@ class HTMLFilter extends Filter
         libxml_use_internal_errors($errorMode);
 
         // get the container context
-        $container = $x->query($context);
+        $containerPath = $this->getConfig(Context::CONTAINER_PATH);
+        $container = $x->query($containerPath);
         if (!$container || !$container->length) {
             throw new \Exception('Invalid container');
         }
